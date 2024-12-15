@@ -54,7 +54,10 @@ const TypingText = ({ text, onComplete, speed = 30, audioManager }) => {
   }, [text]);
 
   return (
-    <div className="whitespace-pre-wrap">
+    <div 
+    className="whitespace-pre-wrap"
+    translate="no"
+    >
       {displayedText}
       {!isComplete && (
         <span className="animate-[blink_1s_step-end_infinite] ml-0.5">▋</span>

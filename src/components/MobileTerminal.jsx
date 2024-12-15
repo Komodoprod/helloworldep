@@ -139,7 +139,10 @@ const MobileTerminal = ({
   };
 
   return (
-    <div className="min-h-screen w-full bg-black text-green-500 font-mono flex flex-col">
+    <div 
+    className="min-h-screen w-full bg-black text-green-500 font-mono flex flex-col"
+        translate="no"
+        >
       {/* Output Display with CRT effects */}
       <div className="flex-1 relative overflow-hidden">
         {/* Scanlines overlay */}

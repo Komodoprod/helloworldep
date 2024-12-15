@@ -57,10 +57,6 @@ export const easterEggs = {
     en: "Unable to corrupt me, they murdered me.",
     fr: "N'ayant pu me corrompre, ils m'ont assassinés."
   },
-  "10/02/2023": {
-    en: "Do you want to be my girlfriend?"
-    fr: "Est-ce que tu veux être ma copine?"
-  },
   hermenegilde: {
     en: "Unable to corrupt me, they murdered me.",
     fr: "N'ayant pu me corrompre, ils m'ont assassinés."

@@ -107,6 +107,8 @@ const Terminal = () => {
     const inputBuffer = useRef([]);
     const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
     const [isMobile, setIsMobile] = useState(false);
+    const [isInputFocused, setIsInputFocused] = useState(false);
+
 
     useEffect(() => {
         if (typeof window !== 'undefined') {  // Vérification que nous sommes côté client
@@ -340,40 +342,43 @@ const Terminal = () => {
 // ============================
 
 useEffect(() => {
-    const displayInitMessages = async () => {
-        setOutput([]); // Clear current output
-        setIsInitializing(true);
+  const displayInitMessages = async () => {
+      setOutput([]); // Clear current output
+      setIsInitializing(true);
 
-        for (const { message, delay } of bootMessages) {
-            await new Promise(resolve => setTimeout(resolve, delay));
-            setOutput(prev => [
-                ...prev,
-                {
-                    type: 'system',
-                    content: message
-                }
-            ]);
-        }
+      // Use the translated boot messages from the current language
+      const currentLanguageMessages = translations[language].init;
 
-        setIsInitializing(false);
-    };
+      for (const message of currentLanguageMessages) {
+          await new Promise(resolve => setTimeout(resolve, 800));
+          setOutput(prev => [
+              ...prev,
+              {
+                  type: 'system',
+                  content: message
+              }
+          ]);
+      }
 
-    // Reset isFirstMount when computer is turned on OR language changes
-    if (isPoweredOn) {
-        isFirstMount.current = true;
-    }
+      setIsInitializing(false);
+  };
 
-    // Start initialization when computer is powered on OR language changes
-    if (isPoweredOn && isFirstMount.current) {
-        isFirstMount.current = false;
-        displayInitMessages();
-    }
+  // Reset isFirstMount when computer is turned on
+  if (isPoweredOn) {
+      isFirstMount.current = true;
+  }
 
-    return () => {
-        if (!isPoweredOn) {
-            isFirstMount.current = true;
-        }
-    };
+  // Start initialization when computer is powered on OR language changes
+  if (isPoweredOn && (isFirstMount.current || language)) {
+      isFirstMount.current = false;
+      displayInitMessages();
+  }
+
+  return () => {
+      if (!isPoweredOn) {
+          isFirstMount.current = true;
+      }
+  };
 }, [isPoweredOn, language]); // Add language to dependencies
 
 // ============================
@@ -416,6 +421,14 @@ useEffect(() => {
     const newSuggestion = getSuggestion(newInput);
     setSuggestion(newSuggestion);
   };
+
+  const handleInputFocus = () => {
+    setIsInputFocused(true);
+};
+
+const handleInputBlur = () => {
+    setIsInputFocused(false);
+};
 
   const processCommand = async (cmd) => {
     const easterEgg = processEasterEgg(cmd, language);
@@ -779,17 +792,6 @@ const handleKeyDown = async (e) => {
   }, []);
 
   useEffect(() => {
-    const handleClick = (e) => {
-      if (terminalRef.current?.contains(e.target)) {
-        inputRef.current?.focus();
-      }
-    };
-
-    document.addEventListener('click', handleClick);
-    return () => document.removeEventListener('click', handleClick);
-  }, []);
-
-  useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
@@ -806,6 +808,7 @@ const handleKeyDown = async (e) => {
 return (
   <div
   className={`min-h-screen w-full bg-black flex items-center text-left p-8 ${isMobile ? "" : "justify-center"}`}
+  translate="no"
 >
     {isMobile ? (
       <MobileTerminal 
@@ -936,7 +939,15 @@ return (
                         value={input}
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
-                        className="w-full bg-transparent text-green-500 outline-none border-none [text-shadow:0_0_2px_#22c55e] relative z-10"
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
+                        className="w-full bg-transparent text-grey-500 outline-none border-none [text-shadow:0_0_2px_#22c55e] relative z-10 placeholder:text-grey-500/10"
+                        style={{
+                          '::placeholder': {
+                              color: 'rgba(34, 197, 94, 0.1)' // This is green with 20% opacity
+                          }
+                      }}
+                        placeholder={!isInputFocused && !input ? (language === 'fr' ? "Cliquez ici pour entrer une commande..." : "Click here to enter a command...") : ""}
                         autoFocus
                         disabled={isInitializing}
                       />
@@ -945,6 +956,7 @@ return (
                           {input}{suggestion}
                         </span>
                       )}
+                      {isInputFocused && (
                       <span 
                         className="absolute h-full w-2 bg-green-500"
                         style={{
@@ -954,6 +966,7 @@ return (
                           opacity: isPlaying ? 0 : undefined
                         }}
                       />
+                    )}
                     </div>
                   </div>
                 </div>
