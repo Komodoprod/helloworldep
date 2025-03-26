@@ -210,7 +210,7 @@ const MobileTerminal = ({
       {/* Output Display with CRT effects */}
       <div className="flex-1 relative">
         {/* Add top padding here to push content down */}
-        <div style={{ paddingTop: "70px" }} className="w-full"></div>
+        <div style={{ paddingTop: "140px" }} className="w-full"></div>
         
         {/* Scanlines overlay */}
         <div 
