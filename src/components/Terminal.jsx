@@ -521,7 +521,7 @@ const formatHelpText = (helpArray) => {
     if (dashIndex > 0) {
       const command = line.substring(0, dashIndex);
       const description = line.substring(dashIndex);
-      // Use a stronger green color (#22c55e is green-500 in Tailwind)
+      // Use a stronger green color (#4ade80 is green-400 in Tailwind)
       return `<span style="font-weight: bold; color: #4ade80;">${command}</span>${description}`;
     }
     
@@ -724,9 +724,9 @@ const processCommand = async (cmd) => {
         return translations[language].credits.notFound;
     }
 
-    // Process basic commands
     if (upperCommand === 'HELP') {
-      return formatHelpText(translations[language].help);
+      const helpText = formatHelpText(translations[language].help);
+      return helpText;
     }
     
     if (upperCommand === 'TRACKLIST') {

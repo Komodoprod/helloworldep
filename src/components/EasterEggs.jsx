@@ -223,20 +223,16 @@ export const easterEggs = {
     fr: "NE PAS CONFONDRE LES MOUFLES ET LES GANTS (ça se voit que dés le mercredi, il se dit vivement la fin de semaine ton gun)"
   },
   laze: {
-    en: "Your English message for Laze here",
-    fr: "Your French message for Laze here"
+    en: "Did you mean to type 'BASS MUSIC QUEEN'?",
+    fr: "Vouliez vous taper 'BASS MUSIC QUEEN'?"
   },
   elohim: {
-    en: "Your English message for Elohim here",
-    fr: "Your French message for Elohim here"
+    en: "The whole world feels like a ticking time bomb...",
+    fr: "The whole world feels like a ticking time bomb..."
   },
   "part time killer": {
     en: "Your English message for Part Time Killer here",
     fr: "Your French message for Part Time Killer here"
-  },
-  "jullian muller": {
-    en: "Your English message for Jullian Muller here",
-    fr: "Your French message for Jullian Muller here"
   },
   "feel suite": {
     en: "Your English message for Feel Suite here",
@@ -263,12 +259,12 @@ export const easterEggs = {
     fr: "Your French message for Noir Mat here"
   },
   tkkf: {
-    en: "Your English message for TKKF here",
-    fr: "Your French message for TKKF here"
+    en: "The .",
+    fr: "L"
   },
   ozzy: {
-    en: "Your English message for Ozzy here",
-    fr: "Your French message for Ozzy here"
+    en: "Dalé, dalé, dalé...",
+    fr: "Dalé, dalé, dalé..."
   },
   svdko: {
     en: "Your English message for Svdko here",
@@ -283,8 +279,8 @@ export const easterEggs = {
     fr: "Your French message for LES MÉDIAS LÀ here"
   },
   ronare: {
-    en: "Your English message for Ronare here",
-    fr: "Your French message for Ronare here"
+    en: "Did you mean 'sammy virji'?",
+    fr: "Voulez vous dire 'sammy virji'?"
   },
   pandrezz: {
     en: "Your English message for Pandrezz here",
@@ -303,16 +299,16 @@ export const easterEggs = {
     fr: "Your French message for Elmyx here"
   },
   lybro: {
-    en: "Your English message for Lybro here",
-    fr: "Your French message for Lybro here"
+    en: "Il pleut, il fait beau, il fait beau, il neige.",
+    fr: "Il pleut, il fait beau, il fait beau, il neige."
   },
   redstain: {
     en: "Your English message for Redstain here",
     fr: "Your French message for Redstain here"
   },
   "2mad": {
-    en: "Your English message for 2MAD here",
-    fr: "Your French message for 2MAD here"
+    en: "My system recognizes 2MAD as 'hottest newcomer'",
+    fr: "My system recognizes 2MAD as 'hottest newcomer'"
   },
   trggx: {
     en: "Your English message for TRGGX here",
@@ -407,12 +403,12 @@ export const easterEggs = {
     fr: "Your French message for Ronnie here"
   },
   "légendes industries": {
-    en: "Your English message for Légendes industries here",
-    fr: "Your French message for Légendes industries here"
+    en: "Un téralitre de légende.",
+    fr: "Un téralitre de légende."
   },
   "antoine sureau": {
-    en: "Your English message for Antoine Sureau here",
-    fr: "Your French message for Antoine Sureau here"
+    en: "Le man qui saisit l'instant.",
+    fr: "Le man qui saisit l'instant."
   },
 };
 

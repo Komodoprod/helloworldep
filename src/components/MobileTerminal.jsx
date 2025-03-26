@@ -1,3 +1,5 @@
+// MobileTerminal.jsx - Updated Component with Fixes
+
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Send, X, Terminal } from 'lucide-react';
 import TypingText from './TypingText';
@@ -24,6 +26,7 @@ const MobileTerminal = ({
   style.textContent = fireflyCSS;
   document.head.appendChild(style);
   
+  const outputContainerRef = useRef(null);
   const initRef = useRef(false);
 
   const commandGroups = {
@@ -32,6 +35,14 @@ const MobileTerminal = ({
     language: ['FR', 'EN'],
     custom: ['CUSTOM COMMAND']
   };
+
+  // Auto-scroll to bottom when content changes
+  useEffect(() => {
+    if (outputContainerRef.current) {
+      const container = outputContainerRef.current;
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [displayedOutput]);
 
   useEffect(() => {
     const initMessages = [
@@ -140,6 +151,30 @@ const MobileTerminal = ({
     }
   };
 
+  // Helper function to check if a string contains HTML
+  const containsHTML = (str) => {
+    return /<[a-z][\s\S]*>/i.test(str);
+  };
+
+  // Function to render content properly (text or HTML)
+  const renderContent = (line) => {
+    if (React.isValidElement(line.content)) {
+      return line.content;
+    }
+    
+    if (typeof line.content === 'string' && containsHTML(line.content)) {
+      return (
+        <div dangerouslySetInnerHTML={{ __html: line.content }} />
+      );
+    }
+    
+    return (
+      <TextGlitchEffect>
+        {line.content}
+      </TextGlitchEffect>
+    );
+  };
+
   return (
     <div 
       className="min-h-screen w-full bg-black text-green-500 font-mono flex flex-col crt-screen crt-overlay crt-scanlines crt-scanline crt-noise"
@@ -158,7 +193,10 @@ const MobileTerminal = ({
 
         
         {/* Main content */}
-        <div className="h-full overflow-y-auto pb-24">
+        <div 
+          ref={outputContainerRef}
+          className="h-full overflow-y-auto pb-24"
+        >
           <div className="p-4 space-y-2">
             {displayedOutput.map((line, i) => (
               <div 
@@ -171,9 +209,7 @@ const MobileTerminal = ({
                   crt-text crt-jitter
                 `}
               >
-                <TextGlitchEffect>
-                  {line.content}
-                </TextGlitchEffect>
+                {renderContent(line)}
               </div>
             ))}
           </div>
