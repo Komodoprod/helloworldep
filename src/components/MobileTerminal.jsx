@@ -212,12 +212,8 @@ const MobileTerminal = ({
 
   return (
     <div 
-      className="fixed inset-0 w-full bg-black text-green-500 font-mono flex flex-col crt-screen crt-overlay crt-scanlines crt-scanline crt-noise"
-      style={{ 
-        paddingBottom: '0px',
-        overscrollBehavior: 'none', // Prevent bounce/elastic scroll effect
-        WebkitOverflowScrolling: 'none' // Disable iOS momentum scrolling
-      }}
+      className="min-h-screen w-full bg-black text-green-500 font-mono flex flex-col crt-screen crt-overlay crt-scanlines crt-scanline crt-noise"
+      style={{ paddingBottom: '0px' }}
       translate="no"
     >
       {/* Output Display with CRT effects */}
@@ -238,15 +234,13 @@ const MobileTerminal = ({
           }}
         />
         
-        {/* Main content - This is the scrollable container */}
+        {/* Main content - This is the scrollable container - NOW WITH BORDER */}
         <div 
           ref={outputContainerRef}
-          className="p-4 space-y-2 overflow-y-auto"
+          className="p-4 space-y-2 overflow-y-auto border border-green-500/30 rounded-md mx-2"
           style={{
             height: 'calc(100vh - 230px)', // Adjusted to account for top padding
             paddingBottom: '100px', // Extra padding at bottom to ensure content isn't hidden
-            WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
-            overscrollBehavior: 'contain' // Prevent scroll chaining
           }}
         >
           {displayedOutput.map((line, i) => (
