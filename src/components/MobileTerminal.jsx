@@ -22,6 +22,7 @@ const MobileTerminal = ({
   const [displayedOutput, setDisplayedOutput] = useState([]);
   const [customCommand, setCustomCommand] = useState('');
   const [isCustomCommand, setIsCustomCommand] = useState(false);
+  const [lastProcessedOutputLength, setLastProcessedOutputLength] = useState(0);
   
   // Create and apply fireflyCSS
   useEffect(() => {
@@ -89,14 +90,19 @@ const MobileTerminal = ({
     }
   }, [audioManager, isInitialized]);
 
-  // Update displayed output when new output arrives
+  // Update displayed output when new output arrives - FIXED to prevent duplicates
   useEffect(() => {
     if (isInitialized && output.length > 0) {
-      setDisplayedOutput(prev => [...prev, ...output]);
+      // Only process new output items that haven't been seen before
+      if (output.length > lastProcessedOutputLength) {
+        const newOutputItems = output.slice(lastProcessedOutputLength);
+        setDisplayedOutput(prev => [...prev, ...newOutputItems]);
+        setLastProcessedOutputLength(output.length);
+      }
     }
-  }, [output, isInitialized]);
+  }, [output, isInitialized, lastProcessedOutputLength]);
 
-  // Add scrolling effect - this is key to fixing the scrolling issue
+  // Add scrolling effect
   useEffect(() => {
     if (outputContainerRef.current) {
       // Wait a short time to ensure content is rendered

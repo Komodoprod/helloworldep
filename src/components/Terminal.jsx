@@ -972,13 +972,26 @@ return (
       <MobileTerminal 
         output={output}
         onCommandSubmit={async (cmd) => {
-          const response = await processCommand(cmd);
-          if (!cmd.trim().toUpperCase().startsWith('STORY ')) {
-            setOutput(prev => [
-              ...prev,
-              { type: 'input', content: `> ${cmd}` },
-              ...(response ? [{ type: 'output', content: response }] : [])
-            ]);
+          // For mobile, we'll process the command but won't update the output state
+          // directly as the MobileTerminal handles its own display
+          
+          // Special handling for STORY command - don't add to output immediately
+          if (cmd.trim().toUpperCase().startsWith('STORY ')) {
+            // Just process the command, let the processCommand function
+            // handle updating the output state
+            await processCommand(cmd);
+          } else {
+            // For non-STORY commands, process and add to output
+            const response = await processCommand(cmd);
+            
+            // Only add to output if there's a response and the command isn't a special case
+            if (response) {
+              setOutput(prev => [
+                ...prev,
+                { type: 'input', content: `> ${cmd}` },
+                { type: 'output', content: response }
+              ]);
+            }
           }
         }}
         availableCommands={translations[language].help}
