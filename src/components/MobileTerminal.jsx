@@ -1,5 +1,3 @@
-// MobileTerminal.jsx - Updated Component with Fixes
-
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Send, X, Terminal } from 'lucide-react';
 import TypingText from './TypingText';
@@ -250,12 +248,13 @@ const MobileTerminal = ({
         {/* Main content - This is the scrollable container */}
         <div 
           ref={outputContainerRef}
-          className="h-full terminal-scrollable pb-32"
+          className="h-full terminal-scrollable pb-32 pt-6"
           style={{
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch', // For iOS smooth scrolling
             touchAction: 'pan-y', // Explicit touch behavior
-            paddingBottom: '120px' // Extra padding to ensure content isn't hidden behind command interface
+            paddingBottom: '120px', // Extra padding to ensure content isn't hidden behind command interface
+            paddingTop: '24px' // Add top padding to prevent content from being cut off
           }}
         >
           <div className="p-4 space-y-2">

@@ -964,13 +964,13 @@ useEffect(() => {
 
 return (
   <div
-    className={`${isMobile ? "min-h-screen overflow-auto mobile-terminal" : "min-h-screen w-full bg-black flex overflow-hidden items-start text-left p-8 pt-24"}`}
-    style={isMobile ? {} : { paddingTop: "0vh" }}
+    className={`min-h-screen w-full bg-black flex items-start text-left ${isMobile ? "mobile-terminal" : "overflow-hidden justify-center p-8 pt-24"}`}
+    style={isMobile ? { paddingTop: '30px' } : { paddingTop: "0vh" }}
     translate="no"
   >
     {isMobile ? (
-      // Add a wrapper div around MobileTerminal to create an independent scroll context
-      <div className="mobile-wrapper">
+      // Mobile version
+      <div className="mobile-wrapper w-full">
         <MobileTerminal 
           output={output}
           onCommandSubmit={async (cmd) => {
@@ -990,8 +990,8 @@ return (
         />
       </div>
     ) : (
-      // Desktop version remains unchanged
-      <div className="relative w-full max-w-full sm:max-w-4xl">
+      // Desktop version - keep centered
+      <div className="relative w-full max-w-full sm:max-w-4xl flex justify-center">
         {/* Terminal with CRT effects */}
         {isPoweredOn && (
           <div 
