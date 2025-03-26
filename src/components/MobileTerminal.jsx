@@ -209,6 +209,9 @@ const MobileTerminal = ({
     >
       {/* Output Display with CRT effects */}
       <div className="flex-1 relative">
+        {/* Add top padding here to push content down */}
+        <div style={{ paddingTop: "70px" }} className="w-full"></div>
+        
         {/* Scanlines overlay */}
         <div 
           className="absolute inset-0 pointer-events-none z-10 scanlines-overlay"
@@ -223,7 +226,7 @@ const MobileTerminal = ({
           ref={outputContainerRef}
           className="p-4 space-y-2 overflow-y-auto"
           style={{
-            height: 'calc(100vh - 160px)', // Subtract height of command bar plus extra space
+            height: 'calc(100vh - 230px)', // Adjusted to account for top padding
             paddingBottom: '100px', // Extra padding at bottom to ensure content isn't hidden
           }}
         >
