@@ -295,7 +295,7 @@ html, body {
   overflow-y: auto !important;
   overflow-x: hidden !important;
   position: static !important; /* Override any fixed positioning */
-  height: 100% !important;
+  height: auto !important;
   width: 100% !important;
   display: block !important;
   padding-top: 30px !important; /* Add top padding to prevent cutoff */
@@ -303,12 +303,21 @@ html, body {
 
 .mobile-wrapper {
   min-height: 100vh;
+  height: auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   background-color: black;
   position: relative;
   width: 100%;
   padding-top: 20px; /* Extra top padding */
+}
+
+.terminal-scrollable {
+  -webkit-overflow-scrolling: touch !important;
+  scroll-behavior: smooth !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: contain !important;
+  height: auto !important;
 }
 
 /* Override any fixed positioning that might interfere with scrolling */
@@ -325,6 +334,16 @@ html, body {
     position: absolute !important;
     top: 0 !important;
     z-index: 100;
+  }
+  
+  /* Fix command interface at bottom */
+  .fixed.bottom-0 {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 50 !important;
+    background-color: black !important;
   }
 }
 

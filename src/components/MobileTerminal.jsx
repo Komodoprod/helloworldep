@@ -1,3 +1,5 @@
+// MobileTerminal.jsx - Updated Component with Fixes
+
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Send, X, Terminal } from 'lucide-react';
 import TypingText from './TypingText';
@@ -43,7 +45,6 @@ const MobileTerminal = ({
     custom: ['CUSTOM COMMAND']
   };
 
-  // Enhanced scroll to bottom function
   const scrollToBottom = () => {
     // Clear any existing timeout to avoid multiple scrolls
     if (scrollToBottomTimeoutRef.current) {
@@ -59,10 +60,60 @@ const MobileTerminal = ({
     }, 50); // Small delay to ensure rendering is complete
   };
 
-  // Auto-scroll to bottom when content changes
+  // Only auto-scroll to bottom for certain events
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
+  const userScrolledRef = useRef(false);
+
+  // Handle scroll events to detect manual scrolling
   useEffect(() => {
-    scrollToBottom();
-  }, [displayedOutput]);
+    const handleScroll = () => {
+      if (outputContainerRef.current) {
+        const container = outputContainerRef.current;
+        const isAtBottom = Math.abs((container.scrollHeight - container.clientHeight) - container.scrollTop) < 50;
+        
+        // User has scrolled away from bottom
+        if (!isAtBottom) {
+          userScrolledRef.current = true;
+          setShouldAutoScroll(false);
+        } else {
+          userScrolledRef.current = false;
+          setShouldAutoScroll(true);
+        }
+      }
+    };
+
+    const container = outputContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
+
+  // Smart auto-scroll: only scroll if we're at the bottom or this is initialization
+  useEffect(() => {
+    if (displayedOutput.length > 0) {
+      const lastItem = displayedOutput[displayedOutput.length - 1];
+      
+      // Only auto-scroll for certain conditions:
+      // 1. During initialization
+      // 2. When user hasn't manually scrolled up
+      // 3. For command inputs and their responses
+      const shouldScroll = 
+        !userScrolledRef.current || 
+        shouldAutoScroll || 
+        !isInitialized || 
+        lastItem.type === 'input';
+      
+      if (shouldScroll) {
+        scrollToBottom();
+      }
+    }
+  }, [displayedOutput, shouldAutoScroll, isInitialized]);
 
   useEffect(() => {
     const initMessages = [
@@ -229,13 +280,13 @@ const MobileTerminal = ({
       className="min-h-screen w-full bg-black text-green-500 font-mono flex flex-col crt-screen crt-overlay crt-scanlines crt-scanline crt-noise mobile-terminal-inner"
       style={{
         position: 'relative',
-        overflowY: 'auto',
-        WebkitOverflowScrolling: 'touch'
+        height: 'auto', // Allow content to determine height
+        minHeight: '100vh'
       }}
       translate="no"
     >
       {/* Output Display with CRT effects */}
-      <div className="flex-1 relative crt-flicker" style={{ overflowY: 'visible' }}>
+      <div className="flex-1 relative crt-flicker" style={{ minHeight: 'calc(100vh - 120px)' }}>
         {/* Scanlines overlay */}
         <div 
           className="absolute inset-0 pointer-events-none z-10 scanlines-overlay"
@@ -248,13 +299,15 @@ const MobileTerminal = ({
         {/* Main content - This is the scrollable container */}
         <div 
           ref={outputContainerRef}
-          className="h-full terminal-scrollable pb-32 pt-6"
+          className="terminal-scrollable pt-6 pb-24"
           style={{
+            minHeight: 'calc(100vh - 180px)',
+            height: 'auto',
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch', // For iOS smooth scrolling
             touchAction: 'pan-y', // Explicit touch behavior
-            paddingBottom: '120px', // Extra padding to ensure content isn't hidden behind command interface
-            paddingTop: '24px' // Add top padding to prevent content from being cut off
+            paddingTop: '24px', // Add top padding to prevent content from being cut off
+            paddingBottom: '90px' // Reduced padding to minimize empty space
           }}
         >
           <div className="p-4 space-y-2">
