@@ -290,3 +290,30 @@ html, body {
   left: 0;
   background-color: black;
 }
+
+.mobile-terminal {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  position: static !important; /* Override any fixed positioning */
+  height: 100% !important;
+  width: 100% !important;
+  display: block !important;
+}
+
+.mobile-wrapper {
+  min-height: 100vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: black;
+  position: relative;
+}
+
+/* Override any fixed positioning that might interfere with scrolling */
+@media (max-width: 768px) {
+  html, body, #root {
+    overflow: auto !important;
+    position: static !important;
+    height: auto !important;
+    min-height: 100%;
+  }
+}

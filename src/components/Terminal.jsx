@@ -959,31 +959,38 @@ useEffect(() => {
 // === RENDER LOGIC ========
 // ============================
 
+// This code should be added to the Terminal.jsx file
+// Find the return statement and modify it like this:
+
 return (
   <div
-  className={`min-h-screen w-full bg-black flex overflow-hidden items-start text-left p-8 pt-24 ${isMobile ? "" : "justify-center"}`}
-  style={{ paddingTop: "0vh" }}
-  translate="no"
+    className={`${isMobile ? "min-h-screen overflow-auto mobile-terminal" : "min-h-screen w-full bg-black flex overflow-hidden items-start text-left p-8 pt-24"}`}
+    style={isMobile ? {} : { paddingTop: "0vh" }}
+    translate="no"
   >
     {isMobile ? (
-      <MobileTerminal 
-        output={output}
-        onCommandSubmit={async (cmd) => {
-          const response = await processCommand(cmd);
-          if (!cmd.trim().toUpperCase().startsWith('STORY ')) {
-            setOutput(prev => [
-              ...prev,
-              { type: 'input', content: `> ${cmd}` },
-              ...(response ? [{ type: 'output', content: response }] : [])
-            ]);
-          }
-        }}
-        availableCommands={translations[language].help}
-        isPlaying={isPlaying}
-        language={language}
-        audioManager={audioManager.current}
-      />
+      // Add a wrapper div around MobileTerminal to create an independent scroll context
+      <div className="mobile-wrapper">
+        <MobileTerminal 
+          output={output}
+          onCommandSubmit={async (cmd) => {
+            const response = await processCommand(cmd);
+            if (!cmd.trim().toUpperCase().startsWith('STORY ')) {
+              setOutput(prev => [
+                ...prev,
+                { type: 'input', content: `> ${cmd}` },
+                ...(response ? [{ type: 'output', content: response }] : [])
+              ]);
+            }
+          }}
+          availableCommands={translations[language].help}
+          isPlaying={isPlaying}
+          language={language}
+          audioManager={audioManager.current}
+        />
+      </div>
     ) : (
+      // Desktop version remains unchanged
       <div className="relative w-full max-w-full sm:max-w-4xl">
         {/* Terminal with CRT effects */}
         {isPoweredOn && (

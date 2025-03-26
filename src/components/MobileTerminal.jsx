@@ -228,11 +228,16 @@ const MobileTerminal = ({
 
   return (
     <div 
-      className="min-h-screen w-full bg-black text-green-500 font-mono flex flex-col crt-screen crt-overlay crt-scanlines crt-scanline crt-noise"
+      className="min-h-screen w-full bg-black text-green-500 font-mono flex flex-col crt-screen crt-overlay crt-scanlines crt-scanline crt-noise mobile-terminal-inner"
+      style={{
+        position: 'relative',
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch'
+      }}
       translate="no"
     >
       {/* Output Display with CRT effects */}
-      <div className="flex-1 relative overflow-hidden crt-flicker">
+      <div className="flex-1 relative crt-flicker" style={{ overflowY: 'visible' }}>
         {/* Scanlines overlay */}
         <div 
           className="absolute inset-0 pointer-events-none z-10 scanlines-overlay"
