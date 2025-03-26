@@ -1,4 +1,4 @@
-// MobileTerminal.jsx - Fixed scrolling issues
+// MobileTerminal.jsx - Fixed version with consistent padding
 
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Send, X, Terminal } from 'lucide-react';
@@ -39,6 +39,7 @@ const MobileTerminal = ({
   
   const outputContainerRef = useRef(null);
   const initRef = useRef(false);
+  const topPaddingRef = useRef(null); // New ref for the top padding div
 
   const commandGroups = {
     tracks: ['PLAY', 'STORY', 'CREDITS'],
@@ -90,7 +91,7 @@ const MobileTerminal = ({
     }
   }, [audioManager, isInitialized]);
 
-  // Update displayed output when new output arrives - FIXED to prevent duplicates
+  // Update displayed output when new output arrives
   useEffect(() => {
     if (isInitialized && output.length > 0) {
       // Only process new output items that haven't been seen before
@@ -111,6 +112,14 @@ const MobileTerminal = ({
       }, 50);
     }
   }, [displayedOutput]);
+
+  // New effect to ensure padding stays consistent
+  useEffect(() => {
+    if (topPaddingRef.current) {
+      // Force the padding to stay at 140px regardless of state changes
+      topPaddingRef.current.style.paddingTop = "140px";
+    }
+  }, [isCustomCommand, isCommandMenuOpen]); // Run when custom command state changes
 
   // Handle command selection
   const handleCommandSelect = (command) => {
@@ -204,13 +213,17 @@ const MobileTerminal = ({
   return (
     <div 
       className="min-h-screen w-full bg-black text-green-500 font-mono flex flex-col crt-screen crt-overlay crt-scanlines crt-scanline crt-noise"
-      style={{ paddingBottom: '0px' }} // Add padding at the bottom for the command bar
+      style={{ paddingBottom: '0px' }}
       translate="no"
     >
       {/* Output Display with CRT effects */}
       <div className="flex-1 relative">
-        {/* Add top padding here to push content down */}
-        <div style={{ paddingTop: "140px" }} className="w-full"></div>
+        {/* Add top padding here to push content down - now with ref */}
+        <div 
+          ref={topPaddingRef}
+          style={{ paddingTop: "140px" }} 
+          className="w-full padding-container"
+        />
         
         {/* Scanlines overlay */}
         <div 
