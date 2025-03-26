@@ -964,34 +964,30 @@ useEffect(() => {
 
 return (
   <div
-    className={`min-h-screen w-full bg-black flex items-start text-left ${isMobile ? "mobile-terminal" : "overflow-hidden justify-center p-8 pt-24"}`}
-    style={isMobile ? { paddingTop: '30px' } : { paddingTop: "0vh" }}
+    className={`${isMobile ? "mobile-terminal" : "min-h-screen w-full bg-black flex overflow-hidden items-start text-left p-8 pt-24 justify-center"}`}
+    style={isMobile ? {} : { paddingTop: "0vh" }}
     translate="no"
   >
     {isMobile ? (
-      // Mobile version
-      <div className="mobile-wrapper w-full">
-        <MobileTerminal 
-          output={output}
-          onCommandSubmit={async (cmd) => {
-            const response = await processCommand(cmd);
-            if (!cmd.trim().toUpperCase().startsWith('STORY ')) {
-              setOutput(prev => [
-                ...prev,
-                { type: 'input', content: `> ${cmd}` },
-                ...(response ? [{ type: 'output', content: response }] : [])
-              ]);
-            }
-          }}
-          availableCommands={translations[language].help}
-          isPlaying={isPlaying}
-          language={language}
-          audioManager={audioManager.current}
-        />
-      </div>
+      <MobileTerminal 
+        output={output}
+        onCommandSubmit={async (cmd) => {
+          const response = await processCommand(cmd);
+          if (!cmd.trim().toUpperCase().startsWith('STORY ')) {
+            setOutput(prev => [
+              ...prev,
+              { type: 'input', content: `> ${cmd}` },
+              ...(response ? [{ type: 'output', content: response }] : [])
+            ]);
+          }
+        }}
+        availableCommands={translations[language].help}
+        isPlaying={isPlaying}
+        language={language}
+        audioManager={audioManager.current}
+      />
     ) : (
-      // Desktop version - keep centered
-      <div className="relative w-full max-w-full sm:max-w-4xl flex justify-center">
+      <div className="relative w-full max-w-full sm:max-w-4xl">
         {/* Terminal with CRT effects */}
         {isPoweredOn && (
           <div 

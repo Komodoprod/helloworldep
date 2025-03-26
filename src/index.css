@@ -315,37 +315,31 @@ html, body {
   scroll-behavior: smooth;
 }
 
-/* Override any fixed positioning that might interfere with scrolling */
 @media (max-width: 768px) {
+  /* Allow proper scrolling */
   html, body, #root {
-    overflow-y: visible !important;
-    position: static !important;
-    height: auto !important;
     min-height: 100%;
+    height: auto !important;
+    overflow: auto !important;
+    position: static !important;
     background-color: black;
   }
   
-  /* Make sure countdown timer doesn't block content */
+  /* Make sure the terminal takes up the full height */
+  .mobile-terminal {
+    min-height: 100vh;
+    padding-bottom: 100px; /* Space for fixed menu */
+  }
+  
+  /* Properly position the countdown timer */
   .fixed.top-4 {
-    position: absolute !important;
+    position: fixed !important;
     top: 0 !important;
-    z-index: 100;
-  }
-  
-  /* CRT effects */
-  .crt-overlay, .crt-scanlines, .crt-scanline, .crt-noise {
-    position: fixed;
-    pointer-events: none;
-  }
-  
-  /* Ensure text container isn't confined */
-  .crt-text {
-    position: relative;
-    z-index: 5;
+    z-index: 50 !important;
   }
 }
 
-/* Desktop-specific styles to maintain centering */
+/* Desktop specific overrides */
 @media (min-width: 769px) {
   #root {
     display: flex;

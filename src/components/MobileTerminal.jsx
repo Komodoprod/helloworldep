@@ -30,14 +30,14 @@ const MobileTerminal = ({
     document.head.appendChild(style);
     
     return () => {
-      document.head.removeChild(style);
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
+      }
     };
   }, []);
   
   const outputContainerRef = useRef(null);
-  const mainContainerRef = useRef(null);
   const initRef = useRef(false);
-  const scrollToBottomTimeoutRef = useRef(null);
 
   const commandGroups = {
     tracks: ['PLAY', 'STORY', 'CREDITS'],
@@ -46,46 +46,7 @@ const MobileTerminal = ({
     custom: ['CUSTOM COMMAND']
   };
 
-  // Handle user scroll preference
-  const [userHasScrolled, setUserHasScrolled] = useState(false);
-  
-  const scrollToBottom = () => {
-    if (userHasScrolled) return; // Don't scroll if user has manually scrolled
-    
-    if (scrollToBottomTimeoutRef.current) {
-      clearTimeout(scrollToBottomTimeoutRef.current);
-    }
-    
-    scrollToBottomTimeoutRef.current = setTimeout(() => {
-      if (mainContainerRef.current) {
-        window.scrollTo(0, document.body.scrollHeight);
-      }
-    }, 50);
-  };
-
-  // Setup scroll detection
-  useEffect(() => {
-    const handleScroll = () => {
-      // If user has scrolled up, mark as user-scrolled
-      if (window.scrollY < document.body.scrollHeight - window.innerHeight - 100) {
-        setUserHasScrolled(true);
-      } else {
-        // If user has scrolled to bottom, reset flag
-        setUserHasScrolled(false);
-      }
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Auto-scroll for initialization
-  useEffect(() => {
-    if (displayedOutput.length > 0 && !userHasScrolled) {
-      scrollToBottom();
-    }
-  }, [displayedOutput, userHasScrolled]);
-
+  // Initialize the terminal
   useEffect(() => {
     const initMessages = [
       { message: 'Initializing...', delay: 1000 },
@@ -115,6 +76,7 @@ const MobileTerminal = ({
     displayInitSequence();
   }, [audioManager]);
 
+  // Start ambient audio
   useEffect(() => {
     if (audioManager && !isInitialized) {
       try {
@@ -127,12 +89,14 @@ const MobileTerminal = ({
     }
   }, [audioManager, isInitialized]);
 
+  // Update displayed output when new output arrives
   useEffect(() => {
     if (isInitialized && output.length > 0) {
       setDisplayedOutput(prev => [...prev, ...output]);
     }
   }, [output, isInitialized]);
 
+  // Handle command selection
   const handleCommandSelect = (command) => {
     if (command === 'CUSTOM COMMAND') {
       setIsCustomCommand(true);
@@ -149,10 +113,8 @@ const MobileTerminal = ({
     setCustomCommand('');
   };
 
+  // Handle command submission
   const handleSubmit = () => {
-    // Reset user scroll preference when submitting a command
-    setUserHasScrolled(false);
-    
     if (isCustomCommand) {
       if (customCommand.trim()) {
         const easterEgg = processEasterEgg(customCommand.trim(), language);
@@ -181,7 +143,6 @@ const MobileTerminal = ({
           }
           setCustomCommand('');
           setIsCustomCommand(false);
-          scrollToBottom();
           return;
         }
         
@@ -226,40 +187,48 @@ const MobileTerminal = ({
 
   return (
     <div 
-      ref={mainContainerRef}
-      className="mobile-terminal-wrapper bg-black text-green-500 font-mono"
-      style={{
-        paddingTop: '30px',
-        paddingBottom: '90px',
-        minHeight: '100vh',
-        width: '100%'
-      }}
+      className="min-h-screen w-full bg-black text-green-500 font-mono flex flex-col crt-screen crt-overlay crt-scanlines crt-scanline crt-noise"
       translate="no"
     >
-      {/* CRT Effects */}
-      <div className="absolute inset-0 pointer-events-none z-0 crt-overlay crt-scanlines crt-scanline crt-noise"></div>
-      
-      {/* Main Content */}
-      <div className="p-4 space-y-2 relative z-10 crt-text crt-flicker">
-        {displayedOutput.map((line, i) => (
-          <div 
-            key={`output-${i}`}
-            className={`
-              ${line.type === 'system' ? 'text-green-500' : ''}
-              ${line.type === 'input' ? 'text-green-300' : ''}
-              ${line.type === 'special' ? 'text-yellow-400 font-bold' : ''}
-              whitespace-pre-wrap break-words
-              crt-text crt-jitter mb-2
-            `}
-          >
-            {renderContent(line)}
-          </div>
-        ))}
+      {/* Output Display with CRT effects */}
+      <div className="flex-1">
+        {/* Scanlines overlay */}
+        <div 
+          className="absolute inset-0 pointer-events-none z-10 scanlines-overlay"
+          style={{
+            background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 1px, transparent 1px, transparent 2px)',
+            backgroundSize: '100% 2px'
+          }}
+        />
+        
+        {/* Main content */}
+        <div 
+          ref={outputContainerRef}
+          className="p-4 space-y-2 pb-24"
+          style={{
+            marginBottom: '80px' // Create space for the fixed command bar
+          }}
+        >
+          {displayedOutput.map((line, i) => (
+            <div 
+              key={`output-${i}`}
+              className={`
+                ${line.type === 'system' ? 'text-green-500' : ''}
+                ${line.type === 'input' ? 'text-green-300' : ''}
+                ${line.type === 'special' ? 'text-yellow-400 font-bold' : ''}
+                whitespace-pre-wrap break-words
+                crt-text crt-jitter
+              `}
+            >
+              {renderContent(line)}
+            </div>
+          ))}
+        </div>
       </div>
-      
-      {/* Fixed Command Interface */}
+  
+      {/* Command Interface */}
       <div 
-        className={`fixed bottom-0 left-0 right-0 bg-black border-t border-green-500/30 p-4 transition-opacity duration-1000 z-20 ${
+        className={`fixed bottom-0 left-0 right-0 bg-black border-t border-green-500/30 p-4 transition-opacity duration-1000 z-30 ${
           isInitialized ? 'opacity-100' : 'opacity-0'
         }`}
       >
@@ -327,9 +296,9 @@ const MobileTerminal = ({
         </div>
       </div>
   
-      {/* Command Menu Modal with scrolling */}
+      {/* Command Menu Modal */}
       {isCommandMenuOpen && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex flex-col crt-overlay crt-scanlines crt-noise">
+        <div className="fixed inset-0 bg-black/90 z-40 flex flex-col">
           {/* Scanlines overlay for modal */}
           <div 
             className="absolute inset-0 pointer-events-none"
@@ -340,7 +309,7 @@ const MobileTerminal = ({
           />
   
           {/* Scrollable content area */}
-          <div className="flex-1 overflow-y-auto terminal-scrollable">
+          <div className="flex-1 overflow-y-auto">
             <div className="p-4 space-y-4 relative">
               {Object.entries(commandGroups).map(([group, commands]) => (
                 <div key={group}>
