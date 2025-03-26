@@ -1,5 +1,3 @@
-// MobileTerminal.jsx - Updated Component with Fixes
-
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Send, X, Terminal } from 'lucide-react';
 import TypingText from './TypingText';
@@ -22,12 +20,21 @@ const MobileTerminal = ({
   const [displayedOutput, setDisplayedOutput] = useState([]);
   const [customCommand, setCustomCommand] = useState('');
   const [isCustomCommand, setIsCustomCommand] = useState(false);
-  const style = document.createElement('style');
-  style.textContent = fireflyCSS;
-  document.head.appendChild(style);
+  
+  // Create and apply fireflyCSS
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = fireflyCSS;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
   
   const outputContainerRef = useRef(null);
   const initRef = useRef(false);
+  const scrollToBottomTimeoutRef = useRef(null);
 
   const commandGroups = {
     tracks: ['PLAY', 'STORY', 'CREDITS'],
@@ -36,12 +43,25 @@ const MobileTerminal = ({
     custom: ['CUSTOM COMMAND']
   };
 
+  // Enhanced scroll to bottom function
+  const scrollToBottom = () => {
+    // Clear any existing timeout to avoid multiple scrolls
+    if (scrollToBottomTimeoutRef.current) {
+      clearTimeout(scrollToBottomTimeoutRef.current);
+    }
+    
+    // Set a small timeout to ensure content is rendered before scrolling
+    scrollToBottomTimeoutRef.current = setTimeout(() => {
+      if (outputContainerRef.current) {
+        const scrollElement = outputContainerRef.current;
+        scrollElement.scrollTop = scrollElement.scrollHeight;
+      }
+    }, 50); // Small delay to ensure rendering is complete
+  };
+
   // Auto-scroll to bottom when content changes
   useEffect(() => {
-    if (outputContainerRef.current) {
-      const container = outputContainerRef.current;
-      container.scrollTop = container.scrollHeight;
-    }
+    scrollToBottom();
   }, [displayedOutput]);
 
   useEffect(() => {
@@ -66,6 +86,8 @@ const MobileTerminal = ({
             </div>
           }
         ]);
+        // Ensure scroll after each message
+        scrollToBottom();
       }
       setIsInitialized(true);
     };
@@ -87,7 +109,12 @@ const MobileTerminal = ({
 
   useEffect(() => {
     if (isInitialized && output.length > 0) {
-      setDisplayedOutput(prev => [...prev, ...output]);
+      setDisplayedOutput(prev => {
+        const newOutput = [...prev, ...output];
+        // Ensure scroll when new output is added
+        setTimeout(scrollToBottom, 50);
+        return newOutput;
+      });
     }
   }, [output, isInitialized]);
 
@@ -136,6 +163,7 @@ const MobileTerminal = ({
           }
           setCustomCommand('');
           setIsCustomCommand(false);
+          scrollToBottom();
           return;
         }
         
@@ -153,7 +181,7 @@ const MobileTerminal = ({
 
   // Helper function to check if a string contains HTML
   const containsHTML = (str) => {
-    return /<[a-z][\s\S]*>/i.test(str);
+    return typeof str === 'string' && /<[a-z][\s\S]*>/i.test(str);
   };
 
   // Function to render content properly (text or HTML)
@@ -162,9 +190,12 @@ const MobileTerminal = ({
       return line.content;
     }
     
-    if (typeof line.content === 'string' && containsHTML(line.content)) {
+    if (containsHTML(line.content)) {
       return (
-        <div dangerouslySetInnerHTML={{ __html: line.content }} />
+        <div 
+          dangerouslySetInnerHTML={{ __html: line.content }} 
+          className="content-html"
+        />
       );
     }
     
@@ -174,6 +205,24 @@ const MobileTerminal = ({
       </TextGlitchEffect>
     );
   };
+
+  // Add smooth scrolling CSS to the document
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      .terminal-scrollable {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
 
   return (
     <div 
@@ -190,12 +239,16 @@ const MobileTerminal = ({
             backgroundSize: '100% 2px'
           }}
         />
-
         
-        {/* Main content */}
+        {/* Main content - This is the scrollable container */}
         <div 
           ref={outputContainerRef}
-          className="h-full overflow-y-auto pb-24"
+          className="h-full terminal-scrollable pb-24"
+          style={{
+            overflowY: 'auto',
+            WebkitOverflowScrolling: 'touch', // For iOS smooth scrolling
+            touchAction: 'pan-y' // Explicit touch behavior
+          }}
         >
           <div className="p-4 space-y-2">
             {displayedOutput.map((line, i) => (
@@ -218,7 +271,7 @@ const MobileTerminal = ({
   
       {/* Command Interface */}
       <div 
-        className={`fixed bottom-0 left-0 right-0 bg-black border-t border-green-500/30 p-4 transition-opacity duration-1000 ${
+        className={`sticky bottom-0 left-0 right-0 bg-black border-t border-green-500/30 p-4 transition-opacity duration-1000 ${
           isInitialized ? 'opacity-100' : 'opacity-0'
         }`}
       >
@@ -299,7 +352,7 @@ const MobileTerminal = ({
           />
   
           {/* Scrollable content area */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto terminal-scrollable">
             <div className="p-4 space-y-4 relative">
               {Object.entries(commandGroups).map(([group, commands]) => (
                 <div key={group}>
