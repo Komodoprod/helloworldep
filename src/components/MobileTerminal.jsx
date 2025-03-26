@@ -204,7 +204,7 @@ const MobileTerminal = ({
   return (
     <div 
       className="min-h-screen w-full bg-black text-green-500 font-mono flex flex-col crt-screen crt-overlay crt-scanlines crt-scanline crt-noise"
-      style={{ paddingBottom: '80px' }} // Add padding at the bottom for the command bar
+      style={{ paddingBottom: '0px' }} // Add padding at the bottom for the command bar
       translate="no"
     >
       {/* Output Display with CRT effects */}
