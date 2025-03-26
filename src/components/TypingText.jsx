@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const TypingText = ({ text, onComplete, speed = 30, audioManager }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const textRef = useRef(null);
 
   useEffect(() => {
     if (!text) return;
@@ -12,6 +13,26 @@ const TypingText = ({ text, onComplete, speed = 30, audioManager }) => {
       if (currentIndex < text.length) {
         setDisplayedText(prev => prev + text[currentIndex]);
         setCurrentIndex(prev => prev + 1);
+        
+        // Trigger scroll after text update
+        setTimeout(() => {
+          if (textRef.current) {
+            // Find the closest scrollable parent
+            let scrollableParent = textRef.current.parentElement;
+            while (
+              scrollableParent && 
+              !(scrollableParent.scrollHeight > scrollableParent.clientHeight && 
+                window.getComputedStyle(scrollableParent).overflowY !== 'hidden')
+            ) {
+              scrollableParent = scrollableParent.parentElement;
+            }
+            
+            // Scroll the parent to show the bottom of this text
+            if (scrollableParent) {
+              scrollableParent.scrollTop = scrollableParent.scrollHeight;
+            }
+          }
+        }, 10);
         
         if (audioManager) {
           try {
@@ -55,8 +76,9 @@ const TypingText = ({ text, onComplete, speed = 30, audioManager }) => {
 
   return (
     <div 
-    className="whitespace-pre-wrap"
-    translate="no"
+      className="whitespace-pre-wrap"
+      translate="no"
+      ref={textRef}
     >
       {displayedText}
       {!isComplete && (

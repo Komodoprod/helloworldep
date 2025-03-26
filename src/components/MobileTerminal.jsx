@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Send, X, Terminal } from 'lucide-react';
 import TypingText from './TypingText';
 import { processEasterEgg, fireflyCSS } from './EasterEggs';
+import TextGlitchEffect from './TextGlitchEffect';
+import EnhancedCRTGlitchEffect from './EnhancedCRTGlitchEffect';
 
 const MobileTerminal = ({ 
   output, 
@@ -140,19 +142,20 @@ const MobileTerminal = ({
 
   return (
     <div 
-    className="min-h-screen w-full bg-black text-green-500 font-mono flex flex-col"
-        translate="no"
-        >
+      className="min-h-screen w-full bg-black text-green-500 font-mono flex flex-col crt-screen crt-overlay crt-scanlines crt-scanline crt-noise"
+      translate="no"
+    >
       {/* Output Display with CRT effects */}
-      <div className="flex-1 relative overflow-hidden">
+      <div className="flex-1 relative overflow-hidden crt-flicker">
         {/* Scanlines overlay */}
         <div 
-          className="absolute inset-0 pointer-events-none z-10"
+          className="absolute inset-0 pointer-events-none z-10 scanlines-overlay"
           style={{
             background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 1px, transparent 1px, transparent 2px)',
             backgroundSize: '100% 2px'
           }}
         />
+
         
         {/* Main content */}
         <div className="h-full overflow-y-auto pb-24">
@@ -165,16 +168,18 @@ const MobileTerminal = ({
                   ${line.type === 'input' ? 'text-green-300' : ''}
                   ${line.type === 'special' ? 'text-yellow-400 font-bold' : ''}
                   whitespace-pre-wrap break-words
-                  [text-shadow:0_0_2px_#22c55e]
+                  crt-text crt-jitter
                 `}
               >
-                {line.content}
+                <TextGlitchEffect>
+                  {line.content}
+                </TextGlitchEffect>
               </div>
             ))}
           </div>
         </div>
       </div>
-
+  
       {/* Command Interface */}
       <div 
         className={`fixed bottom-0 left-0 right-0 bg-black border-t border-green-500/30 p-4 transition-opacity duration-1000 ${
@@ -183,14 +188,14 @@ const MobileTerminal = ({
       >
         {/* Show either selected command or custom command input */}
         {isCustomCommand ? (
-          <div className="flex items-center gap-2 text-green-400 mb-2 [text-shadow:0_0_2px_#22c55e]">
+          <div className="flex items-center gap-2 text-green-400 mb-2 crt-text">
             <Terminal className="w-4 h-4" />
             <input
               type="text"
               value={customCommand}
               onChange={(e) => setCustomCommand(e.target.value.toUpperCase())}
               placeholder={language === 'fr' ? "Commande personnalisée..." : "Type your command..."}
-              className="flex-1 bg-transparent border-none outline-none [text-shadow:0_0_2px_#22c55e]"
+              className="flex-1 bg-transparent border-none outline-none crt-text crt-jitter"
             />
             <X 
               className="w-4 h-4 cursor-pointer" 
@@ -199,7 +204,7 @@ const MobileTerminal = ({
           </div>
         ) : (
           selectedCommand && (
-            <div className="flex items-center gap-2 text-green-400 mb-2 [text-shadow:0_0_2px_#22c55e]">
+            <div className="flex items-center gap-2 text-green-400 mb-2 crt-text">
               <span>{selectedCommand}</span>
               <X 
                 className="w-4 h-4 cursor-pointer" 
@@ -208,21 +213,21 @@ const MobileTerminal = ({
             </div>
           )
         )}
-
+  
         {selectedCommand && commandGroups.tracks.includes(selectedCommand) && (
           <input
             type="text"
             value={trackName}
             onChange={(e) => setTrackName(e.target.value.toUpperCase())}
             placeholder={language === 'fr' ? "Nom du morceau..." : "Track name..."}
-            className="w-full bg-black border border-green-500/30 rounded p-2 text-green-500 placeholder-green-500/50 mb-2 [text-shadow:0_0_2px_#22c55e]"
+            className="w-full bg-black border border-green-500/30 rounded p-2 text-green-500 placeholder-green-500/50 mb-2 crt-text crt-jitter"
           />
         )}
-
+  
         <div className="flex gap-2">
           <button
             onClick={() => setIsCommandMenuOpen(true)}
-            className="flex-1 flex items-center justify-between bg-green-500/10 border border-green-500/30 rounded p-2 [text-shadow:0_0_2px_#22c55e]"
+            className="flex-1 flex items-center justify-between bg-green-500/10 border border-green-500/30 rounded p-2 crt-text crt-jitter"
           >
             <span>
               {isCustomCommand 
@@ -237,17 +242,17 @@ const MobileTerminal = ({
             <button
               onClick={handleSubmit}
               disabled={isPlaying}
-              className="bg-green-500/10 border border-green-500/30 rounded p-2 [text-shadow:0_0_2px_#22c55e]"
+              className="bg-green-500/10 border border-green-500/30 rounded p-2 crt-text crt-jitter"
             >
               <Send className="w-4 h-4" />
             </button>
           )}
         </div>
       </div>
-
+  
       {/* Command Menu Modal with scrolling */}
       {isCommandMenuOpen && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex flex-col">
+        <div className="fixed inset-0 bg-black/90 z-50 flex flex-col crt-overlay crt-scanlines crt-noise">
           {/* Scanlines overlay for modal */}
           <div 
             className="absolute inset-0 pointer-events-none"
@@ -256,23 +261,23 @@ const MobileTerminal = ({
               backgroundSize: '100% 2px'
             }}
           />
-
+  
           {/* Scrollable content area */}
           <div className="flex-1 overflow-y-auto">
             <div className="p-4 space-y-4 relative">
               {Object.entries(commandGroups).map(([group, commands]) => (
                 <div key={group}>
-                  <h3 className="text-green-500/50 mb-2 [text-shadow:0_0_2px_#22c55e] uppercase sticky top-0 bg-black z-10">
-                    {group}
+                  <h3 className="text-green-500/50 mb-2 crt-text crt-jitter uppercase sticky top-0 bg-black z-10">
+                    <TextGlitchEffect>{group}</TextGlitchEffect>
                   </h3>
                   <div className="space-y-2">
                     {commands.map((command) => (
                       <button
                         key={command}
                         onClick={() => handleCommandSelect(command)}
-                        className="w-full text-left p-2 border border-green-500/30 rounded hover:bg-green-500/10 transition-colors [text-shadow:0_0_2px_#22c55e] active:bg-green-500/20"
+                        className="w-full text-left p-2 border border-green-500/30 rounded hover:bg-green-500/10 transition-colors crt-text crt-jitter active:bg-green-500/20"
                       >
-                        {command}
+                        <TextGlitchEffect>{command}</TextGlitchEffect>
                       </button>
                     ))}
                   </div>
@@ -280,18 +285,21 @@ const MobileTerminal = ({
               ))}
             </div>
           </div>
-
+  
           {/* Fixed bottom section */}
           <div className="p-4 border-t border-green-500/30 bg-black">
             <button
               onClick={() => setIsCommandMenuOpen(false)}
-              className="w-full p-2 border border-green-500/30 rounded [text-shadow:0_0_2px_#22c55e] hover:bg-green-500/10 transition-colors active:bg-green-500/20"
+              className="w-full p-2 border border-green-500/30 rounded crt-text crt-jitter hover:bg-green-500/10 transition-colors active:bg-green-500/20"
             >
-              {language === 'fr' ? "Fermer" : "Close"}
+              <TextGlitchEffect>{language === 'fr' ? "Fermer" : "Close"}</TextGlitchEffect>
             </button>
           </div>
         </div>
       )}
+      
+      {/* Add enhanced glitch effect */}
+      <EnhancedCRTGlitchEffect />
     </div>
   );
 };

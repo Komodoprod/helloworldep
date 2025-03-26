@@ -2,7 +2,7 @@ import Terminal from './components/Terminal'
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="h-screen w-screen overflow-hidden bg-black">
       <Terminal />
     </div>
   )
