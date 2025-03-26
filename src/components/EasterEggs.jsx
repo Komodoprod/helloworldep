@@ -82,9 +82,8 @@ export const easterEggs = {
     fr: "you're not one of them, are u?"
   },
   "vladimir cauchemar": {
-    en: skullAscii,
-    fr: skullAscii,
-    isAscii: true
+    en: "Это музыка Владимир Кошмар",
+    fr: "Это музыка Владимир Кошмар"
   },
   habstrakt: {
     en: "I could go for some Chicken Soup right now...",
