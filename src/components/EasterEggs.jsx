@@ -258,16 +258,16 @@ export const easterEggs = {
     fr: "Your French message for Noir Mat here"
   },
   tkkf: {
-    en: "The .",
-    fr: "L"
+    en: "I swear i just saw a blue hedgehog...",
+    fr: "Je jure que je viens de voir un hérisson bleu..."
   },
   ozzy: {
     en: "Dalé, dalé, dalé...",
     fr: "Dalé, dalé, dalé..."
   },
   svdko: {
-    en: "Your English message for Svdko here",
-    fr: "Your French message for Svdko here"
+    en: "All the things you said...",
+    fr: "All the things you said..."
   },
   kyger: {
     en: "Your English message for Kyger here",
