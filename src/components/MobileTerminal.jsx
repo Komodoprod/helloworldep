@@ -1,4 +1,4 @@
-// MobileTerminal.jsx - Updated Component with Fixes
+// MobileTerminal.jsx - Fixed scrolling issues
 
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Send, X, Terminal } from 'lucide-react';
@@ -96,6 +96,16 @@ const MobileTerminal = ({
     }
   }, [output, isInitialized]);
 
+  // Add scrolling effect - this is key to fixing the scrolling issue
+  useEffect(() => {
+    if (outputContainerRef.current) {
+      // Wait a short time to ensure content is rendered
+      setTimeout(() => {
+        outputContainerRef.current.scrollTop = outputContainerRef.current.scrollHeight;
+      }, 50);
+    }
+  }, [displayedOutput]);
+
   // Handle command selection
   const handleCommandSelect = (command) => {
     if (command === 'CUSTOM COMMAND') {
@@ -188,10 +198,11 @@ const MobileTerminal = ({
   return (
     <div 
       className="min-h-screen w-full bg-black text-green-500 font-mono flex flex-col crt-screen crt-overlay crt-scanlines crt-scanline crt-noise"
+      style={{ paddingBottom: '80px' }} // Add padding at the bottom for the command bar
       translate="no"
     >
       {/* Output Display with CRT effects */}
-      <div className="flex-1">
+      <div className="flex-1 relative">
         {/* Scanlines overlay */}
         <div 
           className="absolute inset-0 pointer-events-none z-10 scanlines-overlay"
@@ -201,12 +212,13 @@ const MobileTerminal = ({
           }}
         />
         
-        {/* Main content */}
+        {/* Main content - This is the scrollable container */}
         <div 
           ref={outputContainerRef}
-          className="p-4 space-y-2 pb-24"
+          className="p-4 space-y-2 overflow-y-auto"
           style={{
-            marginBottom: '80px' // Create space for the fixed command bar
+            height: 'calc(100vh - 160px)', // Subtract height of command bar plus extra space
+            paddingBottom: '100px', // Extra padding at bottom to ensure content isn't hidden
           }}
         >
           {displayedOutput.map((line, i) => (
@@ -226,7 +238,7 @@ const MobileTerminal = ({
         </div>
       </div>
   
-      {/* Command Interface */}
+      {/* Command Interface - Fixed at bottom */}
       <div 
         className={`fixed bottom-0 left-0 right-0 bg-black border-t border-green-500/30 p-4 transition-opacity duration-1000 z-30 ${
           isInitialized ? 'opacity-100' : 'opacity-0'
