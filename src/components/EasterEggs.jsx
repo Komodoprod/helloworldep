@@ -57,6 +57,10 @@ export const easterEggs = {
     en: "Unable to corrupt me, they murdered me.",
     fr: "N'ayant pu me corrompre, ils m'ont assassinés."
   },
+  naskid: {
+    en: "Vouliez vous taper 'expert dans la carrière de David Guetta'?",
+    fr: "Vouliez vous taper 'expert dans la carrière de David Guetta'?"
+  },
   lumia: {
     en: "Par l'underground, pour l'underground.",
     fr: "Par l'underground, pour l'underground."
