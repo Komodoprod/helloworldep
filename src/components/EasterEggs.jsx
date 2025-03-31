@@ -401,13 +401,9 @@ export const easterEggs = {
     en: "Your English message for Junior a la prod here",
     fr: "Your French message for Junior a la prod here"
   },
-  naskid: {
-    en: "Your English message for Naskid here",
-    fr: "Your French message for Naskid here"
-  },
   radaar: {
-    en: "Maybe the only",
-    fr: "Your French message for Ronnie here"
+    en: "Vouliez vous taper 'vrai média de diggers'?",
+    fr: "Vouliez vous taper 'vrai média de diggers'?"
   },
   "légendes industries": {
     en: "Un téralitre de légende.",
