@@ -57,6 +57,10 @@ export const easterEggs = {
     en: "Unable to corrupt me, they murdered me.",
     fr: "N'ayant pu me corrompre, ils m'ont assassinés."
   },
+  lumia: {
+    en: "Par l'underground, pour l'underground.",
+    fr: "Par l'underground, pour l'underground."
+  },
   basstrick: {
     en: "Global Street Music",
     fr: "Global Street Music"
@@ -254,7 +258,7 @@ export const easterEggs = {
     fr: "Your French message for Broady here"
   },
   "noir mat": {
-    en: "Your English message for Noir Mat here",
+    en: "Did you",
     fr: "Your French message for Noir Mat here"
   },
   tkkf: {
@@ -397,8 +401,8 @@ export const easterEggs = {
     en: "Your English message for Naskid here",
     fr: "Your French message for Naskid here"
   },
-  ronnie: {
-    en: "Your English message for Ronnie here",
+  radaar: {
+    en: "Maybe the only",
     fr: "Your French message for Ronnie here"
   },
   "légendes industries": {
